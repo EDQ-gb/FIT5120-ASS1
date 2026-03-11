@@ -10,11 +10,11 @@ import QuizGame from './views/QuizGame.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', component: ThenVsNow },
-    { path: '/uv', component: UVCheck },
-    { path: '/action', component: ActionPlan },
-    { path: '/learn', component: LearnCards },
-    { path: '/quiz', component: QuizGame },
+    { path: '/',        component: ThenVsNow },
+    { path: '/uv',      component: UVCheck },
+    { path: '/action',  component: ActionPlan },
+    { path: '/learn',   component: LearnCards },
+    { path: '/quiz',    component: QuizGame },
   ]
 })
 
