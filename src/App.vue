@@ -3,7 +3,7 @@
     <nav class="navbar">
       <div class="nav-logo"><span>☀️</span><span class="logo-text">SunSafe</span></div>
       <div class="nav-links">
-        <router-link to="/" class="nav-btn" active-class="active">UV Check</router-link>
+        <router-link to="/uv" class="nav-btn" active-class="active">UV Check</router-link>
         <router-link to="/action" class="nav-btn" active-class="active">Today's Plan</router-link>
         <router-link to="/learn" class="nav-btn" active-class="active">Learn</router-link>
         <router-link to="/quiz" class="nav-btn" active-class="active">Quiz</router-link>
