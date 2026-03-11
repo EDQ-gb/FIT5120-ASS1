@@ -1,216 +1,368 @@
 <template>
-  <div class="tvn-page">
-    <div class="tvn-hero">
-      <p class="tvn-eyebrow">The Generational Shift</p>
-      <h1 class="tvn-title">Then <span class="vs">vs</span> Now</h1>
-      <p class="tvn-desc">How sun-safety attitudes changed from the 1990s to 2026 — and why it matters.</p>
+  <div class="then-page">
+    <div class="page-header">
+      <h1 class="section-title">Then vs Now</h1>
+      <p class="section-subtitle">How sun-safety attitudes changed from the 1990s to 2026 — and why it matters.</p>
     </div>
 
     <!-- Comparison Slider -->
-    <div class="compare-container card" ref="containerRef">
-      <div class="compare-scene">
-        <!-- THEN side -->
+    <div class="comparison-card card">
+      <div class="scene-container"
+        @mousedown="startDrag"
+        @mousemove="onDrag"
+        @mouseup="stopDrag"
+        @mouseleave="stopDrag"
+        @touchstart.prevent="startDrag"
+        @touchmove.prevent="onDrag"
+        @touchend="stopDrag">
+
+        <!-- 1990s scene (left, always visible) -->
         <div class="scene-side scene-then">
-          <div class="scene-bg then-bg"></div>
+          <div class="scene-bg scene-then-bg"></div>
           <div class="scene-content">
-            <div class="scene-era">📼 1990s Australia</div>
-            <div class="beach-scene">
-              <div class="sun then-sun">☀️</div>
-              <div class="person-wrap">
-                <div class="person"><div class="head">🧴</div><div class="body-then"></div></div>
-                <div class="person-label">No hat, no SPF<br><em>"Just a tan"</em></div>
+            <div class="era-label era-then">📺 1990s Australia</div>
+            <div class="scene-figure">
+              <div class="figure-body then-body">
+                <div class="figure-head then-head">😎</div>
+                <div class="figure-torso then-torso"></div>
               </div>
-              <div class="beach-item">📻</div>
+              <div class="figure-caption then-caption">Tan = healthy<br><small>No worries, no SPF</small></div>
             </div>
-            <div class="scene-stats">
-              <div class="stat-card" v-for="s in thenStats" :key="s.label">
-                <span class="stat-num">{{ s.num }}</span>
-                <span class="stat-label">{{ s.label }}</span>
-              </div>
+            <div class="old-items">
+              <span class="item-bubble">📺</span>
+              <span class="item-bubble">🏖</span>
             </div>
-            <div class="scene-quote">"No worries, I never burn."</div>
           </div>
+          <div class="scene-stats">
+            <div class="stat-bubble">
+              <strong>87%</strong>
+              <small>Teens used sunscreen regularly</small>
+            </div>
+            <div class="stat-bubble">
+              <strong>HIGH</strong>
+              <small>SunSmart campaign compliance</small>
+            </div>
+            <div class="stat-bubble">
+              <strong>↓ Low</strong>
+              <small>Melanoma rate growth (90s)</small>
+            </div>
+          </div>
+          <div class="scene-quote">"No worries, I never burn."</div>
         </div>
 
-        <!-- NOW side -->
-        <div class="scene-side scene-now" :style="{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }">
-          <div class="scene-bg now-bg"></div>
+        <!-- 2026 scene (right, revealed by slider) -->
+        <div class="scene-side scene-now" :style="{ clipPath: `inset(0 0 0 ${sliderPos}%)` }">
+          <div class="scene-bg scene-now-bg"></div>
           <div class="scene-content">
-            <div class="scene-era">📱 2026 Gen Z</div>
-            <div class="beach-scene">
-              <div class="sun now-sun">🌤️</div>
-              <div class="person-wrap">
-                <div class="person"><div class="head">😎</div><div class="body-now"></div></div>
-                <div class="person-label">Tanning oil, no SPF<br><em>"Golden hour aesthetic"</em></div>
+            <div class="era-label era-now">📱 2026 Gen Z</div>
+            <div class="scene-figure">
+              <div class="figure-body now-body">
+                <div class="figure-head now-head">🤳</div>
+                <div class="figure-torso now-torso"></div>
               </div>
-              <div class="beach-item">📱</div>
+              <div class="figure-caption now-caption">Tan aesthetic<br><small>TikTok made me do it</small></div>
             </div>
-            <div class="scene-stats">
-              <div class="stat-card now-stat" v-for="s in nowStats" :key="s.label">
-                <span class="stat-num">{{ s.num }}</span>
-                <span class="stat-label">{{ s.label }}</span>
-              </div>
+            <div class="new-items">
+              <span class="item-bubble">📱</span>
+              <span class="item-bubble">☀️</span>
             </div>
-            <div class="scene-quote">"The sun gives me serotonin ✨"</div>
           </div>
+          <div class="scene-stats">
+            <div class="stat-bubble danger">
+              <strong>41%</strong>
+              <small>Gen Z regularly use SPF</small>
+            </div>
+            <div class="stat-bubble danger">
+              <strong>↑ 2×</strong>
+              <small>Melanoma rate vs 1990s</small>
+            </div>
+            <div class="stat-bubble danger">
+              <strong>74%</strong>
+              <small>Have UV misconceptions</small>
+            </div>
+          </div>
+          <div class="scene-quote now-quote">"A tan makes my skin look so much better."</div>
         </div>
 
-        <!-- Drag handle -->
-        <div class="drag-handle" :style="{ left: sliderPos + '%' }"
-          @mousedown="startDrag" @touchstart.prevent="startDrag">
+        <!-- Slider handle -->
+        <div class="slider-handle" :style="{ left: sliderPos + '%' }">
           <div class="handle-line"></div>
-          <div class="handle-pill"><span>◀</span><span>▶</span></div>
-          <div class="handle-line"></div>
+          <div class="handle-btn">◀ ▶</div>
         </div>
       </div>
     </div>
 
-    <!-- Story cards -->
+    <!-- Story Cards -->
     <div class="story-grid">
-      <div v-for="(card, i) in storyCards" :key="i"
-        class="story-card card"
-        :class="card.era === 'then' ? 'story-then' : 'story-now'"
-        @click="activeCard = activeCard === i ? null : i">
-        <div class="sc-header">
-          <span class="sc-era-tag" :class="card.era">{{ card.era === 'then' ? '1990s' : '2026' }}</span>
-          <span class="sc-icon">{{ card.icon }}</span>
+      <div v-for="card in storyCards" :key="card.id" class="story-card card"
+        :class="card.era === '1990s' ? 'card-then' : 'card-now'">
+        <div class="story-card-header">
+          <span class="era-badge" :class="card.era === '1990s' ? 'badge-then' : 'badge-now'">{{ card.era }}</span>
+          <span class="story-icon">{{ card.icon }}</span>
         </div>
-        <h4 class="sc-title">{{ card.title }}</h4>
-        <p class="sc-body">{{ card.body }}</p>
-        <div class="sc-impact" v-if="activeCard === i">
-          <div class="impact-label">Real impact</div>
+        <h3 class="story-title">{{ card.title }}</h3>
+        <p class="story-desc">{{ card.desc }}</p>
+        <div v-if="card.expanded" class="story-impact">
           <p>{{ card.impact }}</p>
         </div>
-        <button class="sc-toggle">{{ activeCard === i ? 'Less ↑' : 'See impact ↓' }}</button>
+        <button class="story-toggle" @click="card.expanded = !card.expanded">
+          {{ card.expanded ? '▲ Less' : '▼ See impact' }}
+        </button>
       </div>
     </div>
 
-    <!-- Bottom banner -->
-    <div class="stat-banner card">
-      <div class="banner-inner">
-        <div class="banner-num">2×</div>
-        <div class="banner-text">
-          <strong>Australia has one of the world's highest skin cancer rates</strong>
-          <span>yet Gen Z sun-safety compliance has dropped significantly since the 1990s slip-slop-slap era.</span>
-        </div>
-        <router-link to="/learn" class="btn btn-primary">Learn Why →</router-link>
+    <!-- Bottom CTA -->
+    <div class="cta-banner card">
+      <div class="cta-stat">
+        <span class="cta-number uv-very-high">2×</span>
+        <span class="cta-label">higher melanoma rates since the 90s</span>
       </div>
+      <div class="cta-stat">
+        <span class="cta-number uv-extreme">UV 14</span>
+        <span class="cta-label">peak Melbourne summer UV (up from UV 10)</span>
+      </div>
+      <router-link to="/learn" class="btn btn-primary">Learn the science →</router-link>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onUnmounted } from 'vue'
+import { ref, reactive } from 'vue'
 
 const sliderPos = ref(50)
-const containerRef = ref(null)
-const activeCard = ref(null)
-let isDragging = false
+let dragging = false
 
-function startDrag() {
-  isDragging = true
-  window.addEventListener('mousemove', onDrag)
-  window.addEventListener('mouseup', stopDrag)
-  window.addEventListener('touchmove', onDrag, { passive: false })
-  window.addEventListener('touchend', stopDrag)
+function startDrag(e) {
+  dragging = true
+  updateSlider(e)
 }
 function onDrag(e) {
-  if (!isDragging || !containerRef.value) return
-  e.preventDefault()
-  const rect = containerRef.value.getBoundingClientRect()
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX
-  sliderPos.value = Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 5), 95)
+  if (!dragging) return
+  updateSlider(e)
 }
-function stopDrag() {
-  isDragging = false
-  window.removeEventListener('mousemove', onDrag)
-  window.removeEventListener('mouseup', stopDrag)
-  window.removeEventListener('touchmove', onDrag)
-  window.removeEventListener('touchend', stopDrag)
-}
-onUnmounted(stopDrag)
+function stopDrag() { dragging = false }
 
-const thenStats = [
-  { num: '87%', label: 'Teens used sunscreen regularly' },
-  { num: 'HIGH', label: 'SunSmart campaign compliance' },
-  { num: '↓ Low', label: 'Melanoma rate growth (90s)' },
-]
-const nowStats = [
-  { num: '34%', label: 'Gen Z use sunscreen daily' },
-  { num: '42M+', label: '#tan posts on TikTok' },
-  { num: '↑ High', label: 'UV damage in under-25s' },
-]
-const storyCards = [
-  { era: 'then', icon: '📺', title: 'Slip Slop Slap dominated culture', body: 'The 1980s–90s campaign made sun safety a cultural norm. Seagull mascot Sid was on TV every summer.', impact: 'Melanoma rates plateaued through the 1990s — the campaign is credited with saving thousands of lives.' },
-  { era: 'now', icon: '🤳', title: '"Tanning aesthetic" went viral', body: 'TikTok and Instagram normalised sun-baked skin as beauty standard. Tanning oil sales rose 40% from 2020–2024.', impact: 'Dermatologists report a 28% increase in young patients with UV-related skin damage since 2020.' },
-  { era: 'then', icon: '🧴', title: 'SPF was mainstream', body: 'Chemist warehouses ran out of SPF 15+ every summer. School policies required hats outdoors.', impact: "Australia's 2-minute rule (\"no hat, play in the shade\") reduced childhood UV exposure significantly." },
-  { era: 'now', icon: '☁️', title: 'Cloud cover = safe? Myth spreading', body: 'Surveys show 61% of Gen Z believe UV is lower on cloudy days — up to 80% of UV penetrates cloud cover.', impact: 'This misconception leads to unprotected outdoor time during high-UV periods year-round.' },
-  { era: 'then', icon: '🏫', title: 'School sun safety was compulsory', body: 'Victoria mandated sun protection policies in all schools from 1994. Hat rules were enforced.', impact: 'Cohorts educated under these policies show measurably lower skin cancer rates in their 40s today.' },
-  { era: 'now', icon: '💊', title: 'Vitamin D fear replaced sun fear', body: 'Social media wellness culture promoted "safe" tanning for Vitamin D — experts say 15 mins is sufficient.', impact: 'Prolonged UV exposure for Vitamin D provides no extra benefit but multiplies skin cancer risk.' },
-]
+function updateSlider(e) {
+  const container = e.currentTarget
+  const rect = container.getBoundingClientRect()
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX
+  const pct = Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 2), 98)
+  sliderPos.value = pct
+}
+
+const storyCards = reactive([
+  {
+    id: 1, era: '1990s', icon: '📺',
+    title: 'Slip Slop Slap dominated culture',
+    desc: 'The 90s SunSmart campaign made sun safety a national identity. 87% of teens used sunscreen regularly.',
+    impact: 'Melanoma rates were stabilising. The campaign is credited with saving thousands of lives.',
+    expanded: false
+  },
+  {
+    id: 2, era: '2026', icon: '📱',
+    title: '"Tanning aesthetic" went viral',
+    desc: 'TikTok and Instagram normalised sun-baked looks. "Glass skin tan" trends encouraged intentional burning.',
+    impact: 'Each sunburn before 18 doubles lifetime melanoma risk. Gen Z are on track for record diagnoses by 2040.',
+    expanded: false
+  },
+  {
+    id: 3, era: '1990s', icon: '🧴',
+    title: 'SPF was mainstream',
+    desc: 'Chemist warehouses ran out of SPF 15+ every summer. Sunscreen was a cultural norm, not optional.',
+    impact: 'Australia led the world in sun-safety compliance throughout the 90s and early 2000s.',
+    expanded: false
+  },
+  {
+    id: 4, era: '2026', icon: '🌡',
+    title: 'UV levels hit record highs',
+    desc: 'Ozone thinning means Melbourne\'s peak UV has climbed from UV 10 to UV 14+ on summer days.',
+    impact: 'The same beach session that was "safe" in 1995 now burns unprotected fair skin in under 8 minutes.',
+    expanded: false
+  },
+  {
+    id: 5, era: '1990s', icon: '👨‍👩‍👧',
+    title: 'Parents enforced sun safety',
+    desc: 'Hat rules at school, sunscreen before leaving the house — sun protection was enforced by adults.',
+    impact: 'Children who grew up with sun-safe habits carried them into adulthood, reducing cumulative UV damage.',
+    expanded: false
+  },
+  {
+    id: 6, era: '2026', icon: '😟',
+    title: 'Young adults abandoning protection',
+    desc: 'Only 41% of Gen Z regularly use SPF. 74% hold at least one dangerous misconception about UV.',
+    impact: 'This generational gap in sun-safety attitudes will drive a melanoma epidemic within 15–20 years.',
+    expanded: false
+  },
+])
 </script>
 
 <style scoped>
-.tvn-page { display: flex; flex-direction: column; gap: 2rem; }
+.then-page { display: flex; flex-direction: column; gap: 2rem; }
+.page-header { text-align: center; padding: 1rem 0; }
 
-.tvn-hero { text-align: center; padding: 1rem 0 0.5rem; }
-.tvn-eyebrow { font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; }
-.tvn-title { font-family: var(--font-display); font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 800; letter-spacing: -0.04em; margin-bottom: 0.75rem; background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.vs { font-style: italic; opacity: 0.6; }
-.tvn-desc { color: var(--text-muted); max-width: 480px; margin: 0 auto; font-size: 1rem; line-height: 1.6; }
+/* Comparison slider */
+.comparison-card { padding: 0; overflow: hidden; }
+.scene-container {
+  position: relative;
+  height: 420px;
+  cursor: col-resize;
+  user-select: none;
+  overflow: hidden;
+  border-radius: var(--radius);
+}
 
-.compare-container { padding: 0; overflow: hidden; cursor: col-resize; user-select: none; touch-action: none; }
-.compare-scene { position: relative; height: 420px; }
-.scene-side { position: absolute; inset: 0; overflow: hidden; }
-.scene-bg { position: absolute; inset: 0; }
-.then-bg { background: linear-gradient(180deg, #87ceeb 0%, #c8a96e 60%, #b8956a 100%); }
-.now-bg { background: linear-gradient(180deg, #fde68a 0%, #fb923c 50%, #e8c4a0 100%); }
-.scene-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; padding: 1.25rem; color: rgba(0,0,0,0.85); }
-.scene-era { font-family: var(--font-display); font-weight: 800; font-size: 0.95rem; background: rgba(255,255,255,0.35); backdrop-filter: blur(4px); padding: 4px 12px; border-radius: 999px; display: inline-block; margin-bottom: auto; }
-.beach-scene { position: relative; height: 140px; display: flex; align-items: flex-end; gap: 1.5rem; padding: 0 0.5rem; }
-.sun { font-size: 2.5rem; position: absolute; top: 0; right: 16px; animation: sunFloat 4s ease-in-out infinite; }
-@keyframes sunFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
-.then-sun { filter: drop-shadow(0 0 12px rgba(255,200,0,0.7)); }
-.now-sun { filter: drop-shadow(0 0 8px rgba(255,150,0,0.4)); }
-.person-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.person { display: flex; flex-direction: column; align-items: center; }
-.head { font-size: 1.8rem; }
-.body-then { width: 26px; height: 48px; background: #c0392b; border-radius: 6px 6px 0 0; margin-top: -4px; }
-.body-now { width: 26px; height: 48px; background: #d4956a; border-radius: 6px 6px 0 0; margin-top: -4px; }
-.person-label { font-size: 0.62rem; text-align: center; line-height: 1.3; color: rgba(0,0,0,0.7); max-width: 75px; }
-.person-label em { font-style: italic; }
-.beach-item { font-size: 1.4rem; margin-bottom: 8px; }
-.scene-stats { display: flex; gap: 6px; margin-top: auto; flex-wrap: wrap; }
-.stat-card { flex: 1; min-width: 75px; background: rgba(255,255,255,0.4); backdrop-filter: blur(8px); border-radius: 8px; padding: 6px 8px; text-align: center; }
-.now-stat { background: rgba(0,0,0,0.25); color: white; }
-.stat-num { font-family: var(--font-display); font-weight: 800; font-size: 0.9rem; display: block; }
-.stat-label { font-size: 0.6rem; opacity: 0.8; line-height: 1.2; display: block; }
-.scene-quote { margin-top: 8px; font-style: italic; font-size: 0.8rem; background: rgba(255,255,255,0.3); backdrop-filter: blur(4px); padding: 5px 10px; border-radius: 8px; display: inline-block; }
+.scene-side {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+}
 
-.drag-handle { position: absolute; top: 0; bottom: 0; z-index: 10; transform: translateX(-50%); width: 40px; display: flex; flex-direction: column; align-items: center; cursor: col-resize; }
-.handle-line { flex: 1; width: 3px; background: white; opacity: 0.9; }
-.handle-pill { background: white; color: #333; border-radius: 999px; padding: 6px 10px; font-size: 0.72rem; font-weight: 700; display: flex; gap: 4px; box-shadow: 0 2px 12px rgba(0,0,0,0.3); flex-shrink: 0; }
+.scene-then { z-index: 1; }
+.scene-now  { z-index: 2; }
 
-.story-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1rem; }
-.story-card { cursor: pointer; transition: transform 0.2s; border-left: 3px solid transparent; }
-.story-card:hover { transform: translateY(-2px); }
-.story-then { border-left-color: #60a5fa; }
-.story-now { border-left-color: #f97316; }
-.sc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
-.sc-era-tag { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 999px; }
-.sc-era-tag.then { background: rgba(96,165,250,0.15); color: #60a5fa; }
-.sc-era-tag.now { background: rgba(249,115,22,0.15); color: #f97316; }
-.sc-icon { font-size: 1.4rem; }
-.sc-title { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem; }
-.sc-body { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem; }
-.sc-impact { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; margin-bottom: 0.75rem; font-size: 0.8rem; line-height: 1.5; }
-.impact-label { font-weight: 700; color: var(--accent); margin-bottom: 4px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
-.sc-toggle { background: none; border: none; color: var(--accent); font-size: 0.75rem; font-weight: 600; cursor: pointer; padding: 0; }
+.scene-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.scene-then-bg {
+  background: linear-gradient(160deg, #87ceeb 0%, #98d8c8 40%, #f4d03f 70%, #e8c49a 100%);
+}
+.scene-now-bg {
+  background: linear-gradient(160deg, #2c3e50 0%, #c0853a 40%, #e8956d 70%, #f39c12 100%);
+}
 
-.stat-banner { background: linear-gradient(135deg, rgba(249,115,22,0.08), rgba(239,68,68,0.08)); border-color: rgba(249,115,22,0.25); }
-.banner-inner { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
-.banner-num { font-family: var(--font-display); font-size: 3.5rem; font-weight: 800; color: var(--accent); line-height: 1; flex-shrink: 0; }
-.banner-text { flex: 1; display: flex; flex-direction: column; gap: 4px; font-size: 0.88rem; }
-.banner-text strong { font-size: 0.95rem; }
-.banner-text span { color: var(--text-muted); }
+.scene-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.era-label {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  backdrop-filter: blur(8px);
+  width: fit-content;
+}
+.era-then { background: rgba(255,255,255,0.7); color: #1a365d; }
+.era-now  { background: rgba(0,0,0,0.5); color: #fbbf24; }
+
+.scene-figure { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.figure-body { display: flex; flex-direction: column; align-items: center; }
+.figure-head { font-size: 1.8rem; }
+.then-torso { width: 28px; height: 44px; background: #c9a96e; border-radius: 6px; }
+.now-torso  { width: 28px; height: 44px; background: #8B4513; border-radius: 6px; }
+.figure-caption { font-size: 0.68rem; text-align: center; line-height: 1.4; }
+.then-caption { color: #1a365d; font-weight: 600; }
+.now-caption  { color: #fff; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+
+.old-items, .new-items { display: flex; flex-direction: column; gap: 6px; margin-left: auto; }
+.item-bubble { font-size: 1.5rem; background: rgba(255,255,255,0.3); backdrop-filter: blur(4px); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
+
+.scene-stats {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.stat-bubble {
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(8px);
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 80px;
+}
+.stat-bubble.danger { background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.4); color: #fff; }
+.stat-bubble strong { font-family: var(--font-display); font-size: 1rem; font-weight: 800; color: #1a1a2e; }
+.stat-bubble.danger strong { color: #fca5a5; }
+.stat-bubble small { font-size: 0.6rem; color: #444; line-height: 1.3; }
+.stat-bubble.danger small { color: #fecaca; }
+
+.scene-quote {
+  position: relative;
+  z-index: 1;
+  font-style: italic;
+  font-size: 0.8rem;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(8px);
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: #1a1a2e;
+  width: fit-content;
+}
+.now-quote { background: rgba(0,0,0,0.5); color: #fef3c7; }
+
+/* Slider handle */
+.slider-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 10;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.handle-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(0,0,0,0.5);
+}
+.handle-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  color: #333;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Story grid */
+.story-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+.story-card { display: flex; flex-direction: column; gap: 0.75rem; }
+.card-then { border-left: 3px solid #60a5fa; }
+.card-now  { border-left: 3px solid #f97316; }
+
+.story-card-header { display: flex; justify-content: space-between; align-items: center; }
+.era-badge { padding: 3px 10px; border-radius: 999px; font-size: 0.65rem; font-weight: 700; }
+.badge-then { background: rgba(96,165,250,0.15); color: #60a5fa; border: 1px solid rgba(96,165,250,0.3); }
+.badge-now  { background: rgba(249,115,22,0.15); color: #f97316; border: 1px solid rgba(249,115,22,0.3); }
+.story-icon { font-size: 1.5rem; }
+
+.story-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; }
+.story-desc  { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+.story-impact { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; line-height: 1.6; color: var(--text); border-left: 2px solid var(--accent); }
+.story-toggle { background: none; border: none; color: var(--text-muted); font-size: 0.75rem; cursor: pointer; padding: 0; text-align: left; }
+.story-toggle:hover { color: var(--accent); }
+
+/* CTA */
+.cta-banner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; background: var(--surface-2); }
+.cta-stat { display: flex; flex-direction: column; gap: 4px; }
+.cta-number { font-family: var(--font-display); font-size: 2rem; font-weight: 800; }
+.cta-label { font-size: 0.8rem; color: var(--text-muted); max-width: 200px; line-height: 1.4; }
 </style>
