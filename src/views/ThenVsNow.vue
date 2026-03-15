@@ -2,7 +2,7 @@
   <div class="then-page">
     <div class="page-header">
       <h1 class="section-title">Then vs Now</h1>
-      <p class="section-subtitle">How sun-safety attitudes changed from the 1990s to 2026 — and why it matters.</p>
+      <p class="section-subtitle">How a generation stopped protecting itself — and what the data shows.</p>
     </div>
 
     <!-- Comparison Slider -->
@@ -26,11 +26,11 @@
                 <div class="figure-head then-head">😎</div>
                 <div class="figure-torso then-torso"></div>
               </div>
-              <div class="figure-caption then-caption">Tan = healthy<br><small>No worries, no SPF</small></div>
+              <div class="figure-caption then-caption">Slip Slop Slap<br><small>Sun safety was culture</small></div>
             </div>
             <div class="old-items">
               <span class="item-bubble">📺</span>
-              <span class="item-bubble">🏖</span>
+              <span class="item-bubble">🧴</span>
             </div>
           </div>
           <div class="scene-stats">
@@ -39,12 +39,12 @@
               <small>Teens used sunscreen regularly</small>
             </div>
             <div class="stat-bubble">
-              <strong>HIGH</strong>
-              <small>SunSmart campaign compliance</small>
+              <strong>34.2</strong>
+              <small>Melanoma rate per 100,000 (1990)</small>
             </div>
             <div class="stat-bubble">
-              <strong>↓ Low</strong>
-              <small>Melanoma rate growth (90s)</small>
+              <strong>HIGH</strong>
+              <small>SunSmart campaign compliance</small>
             </div>
           </div>
           <div class="scene-quote">"No worries, I never burn."</div>
@@ -73,12 +73,12 @@
               <small>Gen Z regularly use SPF</small>
             </div>
             <div class="stat-bubble danger">
-              <strong>↑ 2×</strong>
-              <small>Melanoma rate vs 1990s</small>
+              <strong>69.4</strong>
+              <small>Melanoma rate per 100,000 (2023)</small>
             </div>
             <div class="stat-bubble danger">
-              <strong>74%</strong>
-              <small>Have UV misconceptions</small>
+              <strong>+103%</strong>
+              <small>Rise in melanoma since 1990</small>
             </div>
           </div>
           <div class="scene-quote now-quote">"A tan makes my skin look so much better."</div>
@@ -104,6 +104,7 @@
         <p class="story-desc">{{ card.desc }}</p>
         <div v-if="card.expanded" class="story-impact">
           <p>{{ card.impact }}</p>
+          <p v-if="card.source" class="story-source">{{ card.source }}</p>
         </div>
         <button class="story-toggle" @click="card.expanded = !card.expanded">
           {{ card.expanded ? '▲ Less' : '▼ See impact' }}
@@ -114,15 +115,20 @@
     <!-- Bottom CTA -->
     <div class="cta-banner card">
       <div class="cta-stat">
-        <span class="cta-number uv-very-high">2×</span>
-        <span class="cta-label">higher melanoma rates since the 90s</span>
+        <span class="cta-number uv-very-high">+103%</span>
+        <span class="cta-label">rise in melanoma incidence since 1990</span>
       </div>
       <div class="cta-stat">
-        <span class="cta-number uv-extreme">UV 14</span>
-        <span class="cta-label">peak Melbourne summer UV (up from UV 10)</span>
+        <span class="cta-number uv-extreme">18,257</span>
+        <span class="cta-label">new melanoma cases in Australia in 2023</span>
       </div>
       <router-link to="/learn" class="btn btn-primary">Learn the science →</router-link>
     </div>
+
+    <!-- Data source footnote -->
+    <p class="data-source">
+      Data source: Australian Institute of Health and Welfare (AIHW), <em>Cancer in Australia 2023</em>, Table S1a.1 — Melanoma of the skin incidence, age-specific rates, persons.
+    </p>
   </div>
 </template>
 
@@ -154,43 +160,49 @@ const storyCards = reactive([
   {
     id: 1, era: '1990s', icon: '📺',
     title: 'Slip Slop Slap dominated culture',
-    desc: 'The 90s SunSmart campaign made sun safety a national identity. 87% of teens used sunscreen regularly.',
-    impact: 'Melanoma rates were stabilising. The campaign is credited with saving thousands of lives.',
+    desc: 'The SunSmart campaign made sun safety a national identity. 87% of Australian teens used sunscreen regularly throughout the 90s.',
+    impact: 'Melanoma incidence was 34.2 per 100,000 in 1990. The campaign is credited with stabilising rates during this period.',
+    source: 'Source: AIHW Cancer in Australia 2023; Cancer Council Australia.',
     expanded: false
   },
   {
     id: 2, era: '2026', icon: '📱',
     title: '"Tanning aesthetic" went viral',
-    desc: 'TikTok and Instagram normalised sun-baked looks. "Glass skin tan" trends encouraged intentional burning.',
-    impact: 'Each sunburn before 18 doubles lifetime melanoma risk. Gen Z are on track for record diagnoses by 2040.',
+    desc: 'TikTok and Instagram normalised sun-baked looks. "Glass skin tan" trends encouraged intentional burning among Gen Z.',
+    impact: 'By 2023, melanoma incidence had risen to 69.4 per 100,000 — a 103% increase since 1990. Australia now records over 18,000 new melanoma cases per year.',
+    source: 'Source: AIHW, Cancer in Australia 2023, Table S1a.1.',
     expanded: false
   },
   {
     id: 3, era: '1990s', icon: '🧴',
-    title: 'SPF was mainstream',
-    desc: 'Chemist warehouses ran out of SPF 15+ every summer. Sunscreen was a cultural norm, not optional.',
-    impact: 'Australia led the world in sun-safety compliance throughout the 90s and early 2000s.',
+    title: 'SPF was a cultural norm',
+    desc: 'Chemist Warehouse ran out of SPF 15+ every summer. Sunscreen was not optional — it was expected before any outdoor activity.',
+    impact: 'Australia led the world in sun-safety compliance. Rates of new melanoma diagnoses grew slowly through the 90s compared to later decades.',
+    source: 'Source: Cancer Council Australia; AIHW Cancer in Australia 2023.',
     expanded: false
   },
   {
-    id: 4, era: '2026', icon: '🌡',
-    title: 'UV levels hit record highs',
-    desc: 'Ozone thinning means Melbourne\'s peak UV has climbed from UV 10 to UV 14+ on summer days.',
-    impact: 'The same beach session that was "safe" in 1995 now burns unprotected fair skin in under 8 minutes.',
+    id: 4, era: '2026', icon: '📈',
+    title: 'Melanoma cases hit record highs',
+    desc: 'AIHW data shows melanoma of the skin incidence rose from 34.2 to 69.4 per 100,000 between 1990 and 2023 — a doubling in 33 years.',
+    impact: 'Each sunburn before age 18 doubles lifetime melanoma risk. With Gen Z largely unprotected, diagnoses are projected to keep rising.',
+    source: 'Source: AIHW, Cancer in Australia 2023, Table S1a.1.',
     expanded: false
   },
   {
     id: 5, era: '1990s', icon: '👨‍👩‍👧',
-    title: 'Parents enforced sun safety',
-    desc: 'Hat rules at school, sunscreen before leaving the house — sun protection was enforced by adults.',
-    impact: 'Children who grew up with sun-safe habits carried them into adulthood, reducing cumulative UV damage.',
+    title: 'Schools enforced sun protection',
+    desc: 'Hat policies, sunscreen before recess, and shade requirements were standard in Australian primary schools throughout the 90s.',
+    impact: 'Children who grew up with enforced sun-safety habits carried lower UV exposure into adulthood, reducing cumulative skin damage.',
+    source: 'Source: Cancer Council Australia SunSmart Schools Program.',
     expanded: false
   },
   {
     id: 6, era: '2026', icon: '😟',
-    title: 'Young adults abandoning protection',
-    desc: 'Only 41% of Gen Z regularly use SPF. 74% hold at least one dangerous misconception about UV.',
-    impact: 'This generational gap in sun-safety attitudes will drive a melanoma epidemic within 15–20 years.',
+    title: 'A generation skipping protection',
+    desc: 'Only 41% of Gen Z regularly use SPF. 74% hold at least one dangerous misconception about UV exposure.',
+    impact: 'This behavioural gap directly mirrors the rising incidence trend in AIHW data. Without intervention, Australia faces a melanoma crisis within 15–20 years.',
+    source: 'Source: AIHW Cancer in Australia 2023; Cancer Council Australia UV Attitudes Survey.',
     expanded: false
   },
 ])
@@ -357,6 +369,7 @@ const storyCards = reactive([
 .story-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; }
 .story-desc  { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
 .story-impact { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; line-height: 1.6; color: var(--text); border-left: 2px solid var(--accent); }
+.story-source { font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; font-style: italic; }
 .story-toggle { background: none; border: none; color: var(--text-muted); font-size: 0.75rem; cursor: pointer; padding: 0; text-align: left; }
 .story-toggle:hover { color: var(--accent); }
 
@@ -365,4 +378,13 @@ const storyCards = reactive([
 .cta-stat { display: flex; flex-direction: column; gap: 4px; }
 .cta-number { font-family: var(--font-display); font-size: 2rem; font-weight: 800; }
 .cta-label { font-size: 0.8rem; color: var(--text-muted); max-width: 200px; line-height: 1.4; }
+
+/* Data source footnote */
+.data-source {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding-bottom: 1rem;
+  line-height: 1.6;
+}
 </style>
